@@ -1,4 +1,0 @@
-logistic_regression
-random_forest
-svm
-mariam-refaat
