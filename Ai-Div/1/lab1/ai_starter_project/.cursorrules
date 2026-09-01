@@ -1,0 +1,28 @@
+Project stack:
+- HTML
+- CSS
+- Vanilla JavaScript
+- No frameworks or external libraries unless explicitly requested.
+
+Project conventions:
+- Keep the code simple and beginner-friendly.
+- Use clear and descriptive variable and function names.
+- Keep JavaScript in script.js and CSS in style.css.
+- Use camelCase for JavaScript variable and function names.
+- Reuse existing styles when possible instead of creating duplicate CSS rules.
+- Keep the current visual style consistent when adding new features.
+- Make only the changes required for the requested feature.
+
+Safety:
+- Never hardcode passwords, API keys, tokens, or credentials.
+- Use textContent for user-provided text instead of innerHTML.
+- Do not inject user input directly into HTML, URLs, or queries.
+
+Things to avoid:
+- Do not add unnecessary libraries, frameworks, or files.
+- Do not rewrite working code unless it is necessary.
+- Do not change existing functionality unless explicitly requested.
+- Do not overcomplicate simple features.
+
+Feature Sprint lesson:
+- When adding a new feature, preserve all existing features and verify that they still work.
