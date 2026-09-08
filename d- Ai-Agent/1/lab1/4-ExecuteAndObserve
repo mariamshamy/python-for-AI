@@ -1,0 +1,83 @@
+from google import genai
+from google.genai import types
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+
+def get_order(order_id: int) -> dict:
+    db = {104: {"status": "delayed", "total": 850}}
+    return db.get(order_id, {"status": "not_found"})
+
+
+def calculate_shipping(weight_kg: float, zone: str) -> dict:
+    rate = {"local": 20, "regional": 35}.get(zone.lower(), 50)
+    return {"cost": round(weight_kg * rate, 2), "currency": "EGP"}
+
+
+config = types.GenerateContentConfig(
+    tools=[get_order, calculate_shipping],
+    automatic_function_calling=types.AutomaticFunctionCallingConfig(
+        disable=True
+    ),
+)
+
+response = client.models.generate_content(
+    model="gemini-3.7-flash",
+    contents="What is the status of order 104?",
+    config=config,
+)
+
+
+TOOLS = {
+    "get_order": get_order,
+    "calculate_shipping": calculate_shipping,
+}
+
+
+call = response.candidates[0].content.parts[0].function_call
+
+if call.name not in TOOLS:
+    raise ValueError(f"Unknown tool: {call.name}")
+
+
+try:
+    result = TOOLS[call.name](**call.args)
+except Exception as e:
+    result = {"error": str(e)}
+
+
+contents = [
+    types.Content(
+        role="user",
+        parts=[
+            types.Part(
+                text="What is the status of order 104?"
+            )
+        ],
+    ),
+
+    response.candidates[0].content,
+
+    types.Content(
+        role="user",
+        parts=[
+            types.Part.from_function_response(
+                name=call.name,
+                response={"result": result},
+            )
+        ],
+    ),
+]
+
+
+final = client.models.generate_content(
+    model="gemini-3.7-flash",
+    contents=contents,
+    config=config,
+)
+
+print(final.text)
