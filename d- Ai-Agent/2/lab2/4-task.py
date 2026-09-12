@@ -1,11 +1,24 @@
-from typing import TypedDict
+from typing import TypedDict, Literal
+import os
+
+from dotenv import load_dotenv
+from langchain_google_genai import ChatGoogleGenerativeAI
+
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import InMemorySaver
-import os
-from dotenv import load_dotenv
-from langgraph.graph import StateGraph, START, END
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langgraph.types import Command, interrupt
+
+
+# --------------------------------
+# Load environment variables
+# --------------------------------
+
 load_dotenv()
+
+
+# --------------------------------
+# Initialize Gemini model
+# --------------------------------
 
 model = ChatGoogleGenerativeAI(
     model="gemini-3.7-flash",
@@ -13,22 +26,40 @@ model = ChatGoogleGenerativeAI(
 )
 
 
+# --------------------------------
+# Shared graph state
+# --------------------------------
+
 class SupportState(TypedDict):
     request: str
     draft: str
     status: str
 
 
-def draft_node(state: SupportState):
-    prompt = f"Draft a concise support response for: {state['request']}"
+# --------------------------------
+# Draft node
+# --------------------------------
 
-    reply = model.invoke(prompt).content
+def draft_node(state: SupportState):
+
+    prompt = (
+        f"Draft a concise support response for: "
+        f"{state['request']}"
+    )
+
+    response = model.invoke(prompt)
+
+    reply = response.text
 
     return {
         "draft": reply,
         "status": "drafted"
     }
 
+
+# --------------------------------
+# Approval node
+# --------------------------------
 
 def approval_node(
     state: SupportState
@@ -44,23 +75,36 @@ def approval_node(
     )
 
 
+# --------------------------------
+# Simulated send_email node
+# --------------------------------
+
 def send_node(state: SupportState):
-    print("SENT:", state["draft"])
+
+    print("\nSENT:")
+    print(state["draft"])
 
     return {
         "status": "sent"
     }
 
 
+# --------------------------------
+# Cancel node
+# --------------------------------
+
 def cancel_node(state: SupportState):
+
+    print("\nMessage was cancelled.")
+
     return {
         "status": "cancelled"
     }
 
 
-# -----------------------------
-# Build the graph
-# -----------------------------
+# --------------------------------
+# Build graph
+# --------------------------------
 
 builder = StateGraph(SupportState)
 
@@ -70,6 +114,10 @@ builder.add_node("send", send_node)
 builder.add_node("cancel", cancel_node)
 
 
+# --------------------------------
+# Add graph edges
+# --------------------------------
+
 builder.add_edge(START, "draft")
 builder.add_edge("draft", "approval")
 
@@ -77,18 +125,18 @@ builder.add_edge("send", END)
 builder.add_edge("cancel", END)
 
 
-# -----------------------------
+# --------------------------------
 # Compile with checkpointer
-# -----------------------------
+# --------------------------------
 
 graph = builder.compile(
     checkpointer=InMemorySaver()
 )
 
 
-# -----------------------------
-# Same thread must be reused
-# -----------------------------
+# --------------------------------
+# Thread configuration
+# --------------------------------
 
 config = {
     "configurable": {
@@ -97,6 +145,10 @@ config = {
 }
 
 
+# --------------------------------
+# Initial state
+# --------------------------------
+
 initial_state = {
     "request": "My order is three days late",
     "draft": "",
@@ -104,26 +156,31 @@ initial_state = {
 }
 
 
-# -----------------------------
-# First invocation -> PAUSE
-# -----------------------------
+# --------------------------------
+# First run -> PAUSE
+# --------------------------------
 
 paused = graph.invoke(
     initial_state,
     config
 )
 
+print("\nApproval request:")
 print(paused["__interrupt__"])
 
 
-# -----------------------------
+# --------------------------------
 # Human approves -> RESUME
-# -----------------------------
+# --------------------------------
 
 final = graph.invoke(
     Command(resume=True),
     config
 )
 
+
+print("\nFinal state:")
 print(final)
+
+print("\nFinal status:")
 print(final["status"])
