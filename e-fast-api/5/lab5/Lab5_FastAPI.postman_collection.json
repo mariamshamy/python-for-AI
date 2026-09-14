@@ -1,0 +1,147 @@
+{
+  "info": {
+    "name": "Lab5 FastAPI Documents",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Documents",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/documents",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "documents"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create Document",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Postman Doc\",\n  \"content\": \"capstone\",\n  \"priority\": 3,\n  \"description\": \"Lecture 5\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/documents",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "documents"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get One Document",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/documents/{{document_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "documents",
+            "{{document_id}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update Document",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Updated Postman Doc\",\n  \"content\": \"updated capstone\",\n  \"priority\": 4,\n  \"description\": \"Updated in Lab 5\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/documents/{{document_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "documents",
+            "{{document_id}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Delete Document",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "{{base_url}}/documents/{{document_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "documents",
+            "{{document_id}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Invalid Create - 422",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"x\",\n  \"content\": \"\",\n  \"priority\": 99,\n  \"description\": \"invalid\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/documents",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "documents"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Missing ID - 404",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/documents/999999",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "documents",
+            "999999"
+          ]
+        }
+      }
+    }
+  ]
+}

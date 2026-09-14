@@ -1,0 +1,1 @@
+SmartDoc AI combines FastAPI, SQLite, Gemini analysis, and a controlled read-only agent.

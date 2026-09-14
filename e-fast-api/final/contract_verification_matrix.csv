@@ -1,0 +1,10 @@
+Method / Path,Case,Expected,Actual,Pass/Fail
+GET /health,normal,200,,
+GET /documents,normal,200,,
+POST /documents,valid body,201,,
+POST /documents,invalid body,422,,
+GET /documents/999999,missing,404,,
+POST /documents/upload,unsupported type,400,,
+POST /documents/{id}/analyze,existing,200,,
+POST /documents/999999/analyze,missing,404,,
+POST /agent/ask,document question,200,,

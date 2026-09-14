@@ -1,0 +1,101 @@
+{
+  "info": {
+    "name": "SmartDoc AI",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/health"
+      }
+    },
+    {
+      "name": "List Documents",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/documents"
+      }
+    },
+    {
+      "name": "Create Document",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/documents",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Postman SmartDoc\",\n  \"content\": \"Created during Lab 6 testing.\",\n  \"priority\": 2,\n  \"description\": \"Postman test\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Invalid Create - 422",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/documents",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"x\",\n  \"content\": \"\",\n  \"priority\": 99\n}"
+        }
+      }
+    },
+    {
+      "name": "Get One",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/documents/{{document_id}}"
+      }
+    },
+    {
+      "name": "Missing ID - 404",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/documents/999999"
+      }
+    },
+    {
+      "name": "Analyze Document",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/documents/{{document_id}}/analyze"
+      }
+    },
+    {
+      "name": "Analyze Missing ID - 404",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/documents/999999/analyze"
+      }
+    },
+    {
+      "name": "Ask Agent",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/agent/ask",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"Find the API notes and tell me their key idea\"\n}"
+        }
+      }
+    }
+  ]
+}

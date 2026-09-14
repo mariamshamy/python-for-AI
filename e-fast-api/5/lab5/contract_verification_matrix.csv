@@ -1,0 +1,6 @@
+Method / Path,Case,Expected,Actual,Pass/Fail
+GET /documents,normal,200,,
+POST /documents,valid body,201,,
+POST /documents,invalid body,422,,
+GET /documents/999999,missing,404,,
+DELETE /documents/{id},existing,200,,
